@@ -3,16 +3,17 @@
 
 from flask import Flask, request, url_for, redirect
 import MySQLdb
+import os
 
 
 app = Flask(__name__)
 
 db_adsl_config = {
-    'host': '192.168.27.37',
-    'port': 3306,
-    'user': 'root',
-    'passwd': 'root',
-    'db': 'CDB',
+    'host': os.environ['ADSL_DB_HOST'],
+    'port': os.environ['ADSL_DB_PORT'],
+    'user': os.environ['ADSL_DB_USER'],
+    'passwd': os.environ['ADSL_DB_PASSWD'],
+    'db': os.environ['ADSL_DB_NAME'],
     'charset': 'utf8'
 }
 
