@@ -7,6 +7,14 @@ import MySQLdb
 
 app = Flask(__name__)
 
+db_adsl_config = {
+    'host': '192.168.27.37',
+    'port': 3306,
+    'user': 'root',
+    'passwd': 'root',
+    'db': 'CDB',
+    'charset': 'utf8'
+}
 
 @app.route('/')
 def index():
@@ -15,7 +23,8 @@ def index():
 
 @app.route('/adsl/list', methods=['GET', 'POST'])
 def adsllist():
-    conn = MySQLdb.connect(host='192.168.27.37', user='root', passwd='root', db='CDB', charset='utf8')
+    conn = MySQLdb.connect(host=db_adsl_config['host'],port=db_adsl_config['port'], user=db_adsl_config['user'],
+                           passwd=db_adsl_config['passwd'], db=db_adsl_config['db'], charset=db_adsl_config['charset'])
     cur = conn.cursor()
 
     if request.method == 'GET':
@@ -66,7 +75,8 @@ def adsllist():
 
 @app.route('/adsl', methods=['POST'])
 def adslop():
-    conn = MySQLdb.connect(host='192.168.27.37', user='root', passwd='root', db='CDB', charset='utf8')
+    conn = MySQLdb.connect(host=db_adsl_config['host'],port=db_adsl_config['port'], user=db_adsl_config['user'],
+                           passwd=db_adsl_config['passwd'], db=db_adsl_config['db'], charset=db_adsl_config['charset'])
     cur = conn.cursor()
     rets = 1
     parameters = request.form
@@ -93,4 +103,4 @@ def adslop():
 
 
 if __name__ == '__main__':
-    app.run(debug=True, port=8000, host='192.168.27.37')
+    app.run(debug=True, port=8000, host='0.0.0.0')
