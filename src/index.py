@@ -22,44 +22,43 @@ def index():
     return redirect(url_for('adsllist'))
 
 
-@app.route('/adsl/list', methods=['GET', 'POST'])
+@app.route('/adsl/list')
 def adsllist():
     conn = MySQLdb.connect(host=db_adsl_config['host'],port=db_adsl_config['port'], user=db_adsl_config['user'],
                            passwd=db_adsl_config['passwd'], db=db_adsl_config['db'], charset=db_adsl_config['charset'])
     cur = conn.cursor()
 
-    if request.method == 'GET':
-        parameters = request.args
-        getline = lambda x: x[0]
-        lines = []
-        if len(parameters) > 0:
-            if 'num' in parameters:
-                num = parameters['num']
-                sql = 'select line,ip_adsl,status from tb_adsl where status="available" limit ' + num
-                cur.execute(sql)
-                data = cur.fetchall()
-                print data
-                for ret in data:
-                    lines.append(getline(ret))
-
-                print lines
-                if len(lines) > 1:
-                    sql = 'update tb_adsl set status="using" where line in ' + str(tuple(lines)).replace('u\'', '\'')
-                if len(lines) == 1:
-                    sql = 'update tb_adsl set status="using" where line=\'' + str(lines[0]) + '\''
-
-                cur.execute(sql)
-                conn.commit()
-            elif 'show' in parameters:
-                if parameters['show'].lower() == 'all':
-                    sql = 'select line,ip_adsl,status from tb_adsl'
-                    cur.execute(sql)
-                    data = cur.fetchall()
-
-        else:
-            sql = 'select line,ip_adsl,status from tb_adsl where status="available"'
+    parameters = request.args
+    getline = lambda x: x[0]
+    lines = []
+    if len(parameters) > 0:
+        if 'num' in parameters:
+            num = parameters['num']
+            sql = 'select line,ip_adsl,status from tb_adsl where status="available" limit ' + num
             cur.execute(sql)
             data = cur.fetchall()
+            print data
+            for ret in data:
+                lines.append(getline(ret))
+
+            print lines
+            if len(lines) > 1:
+                sql = 'update tb_adsl set status="using" where line in ' + str(tuple(lines)).replace('u\'', '\'')
+            if len(lines) == 1:
+                sql = 'update tb_adsl set status="using" where line=\'' + str(lines[0]) + '\''
+
+            cur.execute(sql)
+            conn.commit()
+        elif 'show' in parameters:
+            if parameters['show'].lower() == 'all':
+                sql = 'select line,ip_adsl,status from tb_adsl'
+                cur.execute(sql)
+                data = cur.fetchall()
+
+    else:
+        sql = 'select line,ip_adsl,status from tb_adsl where status="available"'
+        cur.execute(sql)
+        data = cur.fetchall()
 
     lines = []
     for ret in data:
