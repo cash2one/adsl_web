@@ -5,7 +5,6 @@ from flask import Flask, request, url_for, redirect
 import MySQLdb
 import os
 
-
 app = Flask(__name__)
 
 db_adsl_config = {
@@ -17,6 +16,7 @@ db_adsl_config = {
     'charset': 'utf8'
 }
 
+
 @app.route('/')
 def index():
     return redirect(url_for('adsllist'))
@@ -24,7 +24,7 @@ def index():
 
 @app.route('/adsl/list')
 def adsllist():
-    conn = MySQLdb.connect(host=db_adsl_config['host'],port=db_adsl_config['port'], user=db_adsl_config['user'],
+    conn = MySQLdb.connect(host=db_adsl_config['host'], port=db_adsl_config['port'], user=db_adsl_config['user'],
                            passwd=db_adsl_config['passwd'], db=db_adsl_config['db'], charset=db_adsl_config['charset'])
     cur = conn.cursor()
 
@@ -64,7 +64,7 @@ def adsllist():
     for ret in data:
         lines.append(str(ret))
 
-    rets = '\n'.join(lines).replace('u\'', '').replace('\'', '').replace('(', '').replace(')', '')\
+    rets = '\n'.join(lines).replace('u\'', '').replace('\'', '').replace('(', '').replace(')', '') \
         .replace(',', ':').replace(' ', '')
 
     cur.close()
@@ -75,7 +75,7 @@ def adsllist():
 
 @app.route('/adsl', methods=['POST'])
 def adslop():
-    conn = MySQLdb.connect(host=db_adsl_config['host'],port=db_adsl_config['port'], user=db_adsl_config['user'],
+    conn = MySQLdb.connect(host=db_adsl_config['host'], port=db_adsl_config['port'], user=db_adsl_config['user'],
                            passwd=db_adsl_config['passwd'], db=db_adsl_config['db'], charset=db_adsl_config['charset'])
     cur = conn.cursor()
     rets = 1
