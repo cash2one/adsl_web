@@ -40,7 +40,7 @@ class Adsl(object):
                 ret = availablelines
 
         for line in ret:
-            self.setstatusbyline(line,'using')
+            self.setstatusbyline(line, 'using')
 
         return ret
 
@@ -76,6 +76,6 @@ class Adsl(object):
 
     def additem(self, line, ip_idc, ip_adsl):
         status = 'available'
-        data = {'ip_idc':ip_idc, 'ip_adsl':ip_adsl, 'status':status}
+        data = {'ip_idc': ip_idc, 'ip_adsl': ip_adsl, 'status': status}
         ret = self.conn.hmset(line, data)
         return ret

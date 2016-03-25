@@ -53,13 +53,13 @@ def adslop():
 
     if status == 'used':
         for line in lines.split(','):
-            adsl.setstatusbyline(line,'dailing')
+            adsl.setstatusbyline(line, 'dailing')
 
         return 'OK'
 
     elif status == 'dailed':
         for line in lines.split(','):
-            adsl.setstatusbyline(line,'available')
+            adsl.setstatusbyline(line, 'available')
 
         return 'OK'
 
@@ -72,7 +72,6 @@ def adslop():
         str = lines + ':' + ip_idc + ':' + ip_adsl
 
         return 'Add ' + str + ' successfully!'
-
 
 
 if __name__ == '__main__':
