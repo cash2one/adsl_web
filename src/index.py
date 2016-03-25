@@ -27,13 +27,13 @@ def adsllist():
             num = int(parameters['num'])
             lines = adsl.getnumsavailablelines(num)
 
-            return lines
+            return str(lines)
 
         elif 'show' in parameters:
             if parameters['show'].lower() == 'all':
                 data = adsl.getall()
 
-            return data
+            return str(data)
 
     else:
         ret = []
@@ -42,7 +42,7 @@ def adsllist():
             if item['status'] == 'available':
                 ret.append(item)
 
-        return ret
+        return str(ret)
 
 
 @app.route('/adsl')
@@ -52,19 +52,29 @@ def adslop():
     status = request.args['status']
 
     if status == 'used':
+        ret = ''
         for line in lines.split(','):
-            adsl.setstatusbyline(line, 'dailing')
+            if adsl.conn.exists(lines):
+                adsl.setstatusbyline(line, 'dailing')
+                ret += line + ': ok\n'
+            else:
+                ret += line + ': no this line\n'
 
-        return 'OK'
+        return ret
 
     elif status == 'dailed':
+        ret = ''
         for line in lines.split(','):
-            adsl.setstatusbyline(line, 'available')
+            if adsl.conn.exists(lines):
+                adsl.setstatusbyline(line, 'available')
+                ret += line + ': ok\n'
+            else:
+                ret += line + ': no this line\n'
 
-        return 'OK'
+        return ret
 
     elif status == 'new':
-        ip_adsl = request.get('ip_adsl')
+        ip_adsl = request.args['ip_adsl']
         ip_idc = request.remote_addr
 
         adsl.additem(lines, ip_idc, ip_adsl)
