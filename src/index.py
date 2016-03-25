@@ -2,18 +2,13 @@
 
 
 from flask import Flask, request, url_for, redirect
-import MySQLdb
-import os
+from tools import Adsl
 
 app = Flask(__name__)
 
-db_adsl_config = {
-    'host': os.environ['ADSL_DB_HOST'],
-    'port': os.environ['ADSL_DB_PORT'],
-    'user': os.environ['ADSL_DB_USER'],
-    'passwd': os.environ['ADSL_DB_PASSWD'],
-    'db': os.environ['ADSL_DB_NAME'],
-    'charset': 'utf8'
+adsl_config = {
+    'host': '192.168.27.37',
+    'port': 6379,
 }
 
 
@@ -24,82 +19,60 @@ def index():
 
 @app.route('/adsl/list')
 def adsllist():
-    conn = MySQLdb.connect(host=db_adsl_config['host'], port=db_adsl_config['port'], user=db_adsl_config['user'],
-                           passwd=db_adsl_config['passwd'], db=db_adsl_config['db'], charset=db_adsl_config['charset'])
-    cur = conn.cursor()
-
+    adsl = Adsl(adsl_config['host'], adsl_config['port'])
     parameters = request.args
-    getline = lambda x: x[0]
-    lines = []
+
     if len(parameters) > 0:
         if 'num' in parameters:
-            num = parameters['num']
-            sql = 'select line,ip_adsl,status from tb_adsl where status="available" limit ' + num
-            cur.execute(sql)
-            data = cur.fetchall()
-            print data
-            for ret in data:
-                lines.append(getline(ret))
+            num = int(parameters['num'])
+            lines = adsl.getnumsavailablelines(num)
 
-            print lines
-            if len(lines) > 1:
-                sql = 'update tb_adsl set status="using" where line in ' + str(tuple(lines)).replace('u\'', '\'')
-            if len(lines) == 1:
-                sql = 'update tb_adsl set status="using" where line=\'' + str(lines[0]) + '\''
+            return lines
 
-            cur.execute(sql)
-            conn.commit()
         elif 'show' in parameters:
             if parameters['show'].lower() == 'all':
-                sql = 'select line,ip_adsl,status from tb_adsl'
-                cur.execute(sql)
-                data = cur.fetchall()
+                data = adsl.getall()
+
+            return data
 
     else:
-        sql = 'select line,ip_adsl,status from tb_adsl where status="available"'
-        cur.execute(sql)
-        data = cur.fetchall()
+        ret = []
+        data = adsl.getall()
+        for item in data:
+            if item['status'] == 'available':
+                ret.append(item)
 
-    lines = []
-    for ret in data:
-        lines.append(str(ret))
-
-    rets = '\n'.join(lines).replace('u\'', '').replace('\'', '').replace('(', '').replace(')', '') \
-        .replace(',', ':').replace(' ', '')
-
-    cur.close()
-    conn.close()
-
-    return str(rets)
+        return ret
 
 
-@app.route('/adsl', methods=['POST'])
+@app.route('/adsl')
 def adslop():
-    conn = MySQLdb.connect(host=db_adsl_config['host'], port=db_adsl_config['port'], user=db_adsl_config['user'],
-                           passwd=db_adsl_config['passwd'], db=db_adsl_config['db'], charset=db_adsl_config['charset'])
-    cur = conn.cursor()
-    rets = 1
-    parameters = request.form
-    lines = parameters['lines']
+    adsl = Adsl(adsl_config['host'], adsl_config['port'])
+    lines = request.args['lines']
+    status = request.args['status']
 
-    try:
-        lines_f = []
-        if ',' in lines:
-            for line in lines.split(','):
-                lines_f.append(line)
-                sql = 'update tb_adsl set status="dailing" where line in ' + str(tuple(lines_f)).replace('u\'', '\'')
-        else:
-            sql = 'update tb_adsl set status="using" where line=\'' + lines + '\''
-        cur.execute(sql)
+    if status == 'used':
+        for line in lines.split(','):
+            adsl.setstatusbyline(line,'dailing')
 
-        conn.commit()
-    except MySQLdb.Error:
-        rets = 0
+        return 'OK'
 
-    cur.close()
-    conn.close()
+    elif status == 'dailed':
+        for line in lines.split(','):
+            adsl.setstatusbyline(line,'available')
 
-    return str(rets)
+        return 'OK'
+
+    elif status == 'new':
+        ip_adsl = request.get('ip_adsl')
+        ip_idc = request.remote_addr
+
+        adsl.additem(lines, ip_idc, ip_adsl)
+
+        str = lines + ':' + ip_idc + ':' + ip_adsl
+
+        return 'Add ' + str + ' successfully!'
+
 
 
 if __name__ == '__main__':
