@@ -35,7 +35,6 @@ def adsllist():
 
             return str(data)
 
-
     else:
         ret = []
         data = adsl.getall()
