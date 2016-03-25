@@ -25,24 +25,33 @@ def adsllist():
     if len(parameters) > 0:
         if 'num' in parameters:
             num = int(parameters['num'])
-            lines = adsl.getnumsavailablelines(num)
+            # lines = adsl.getnumsavailablelines(num)
+            #
+            # ret = '\n'.join(lines)
+            lines = adsl.getlines()
 
-            return str(lines)
+            return ret
 
         elif 'show' in parameters:
+            ret = ''
             if parameters['show'].lower() == 'all':
-                data = adsl.getall()
+                # data = adsl.getall()
+                lines = adsl.getlines()
+                for line in lines:
+                    str = line + ' ' + adsl.getidcbyline(line) + ' ' + adsl.getadslbyline(line) + ' ' + adsl.getstatusbyline(line)
+                    ret += str + '\n'
 
-            return str(data)
+            return ret
 
     else:
-        ret = []
-        data = adsl.getall()
-        for item in data:
-            if item['status'] == 'available':
-                ret.append(item)
+        ret = ''
+        lines = adsl.getlines()
+        for line in lines:
+            if adsl.getstatusbyline(line) == 'available':
+                str = line + ' ' + adsl.getidcbyline(line) + ' ' + adsl.getadslbyline(line) + ' ' + adsl.getstatusbyline(line)
+                ret += str + '\n'
 
-        return str(ret)
+        return ret
 
 
 @app.route('/adsl')
@@ -54,7 +63,7 @@ def adslop():
     if status == 'used':
         ret = ''
         for line in lines.split(','):
-            if adsl.conn.exists(lines):
+            if adsl.exists(lines):
                 adsl.setstatusbyline(line, 'dailing')
                 ret += line + ': ok\n'
             else:
@@ -65,7 +74,7 @@ def adslop():
     elif status == 'dailed':
         ret = ''
         for line in lines.split(','):
-            if adsl.conn.exists(lines):
+            if adsl.exists(lines):
                 adsl.setstatusbyline(line, 'available')
                 ret += line + ': ok\n'
             else:

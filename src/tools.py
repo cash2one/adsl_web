@@ -79,3 +79,6 @@ class Adsl(object):
         data = {'ip_idc': ip_idc, 'ip_adsl': ip_adsl, 'status': status}
         ret = self.conn.hmset(line, data)
         return ret
+
+    def exists(self, line):
+        return self.conn.exists(line)
