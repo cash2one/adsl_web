@@ -61,7 +61,7 @@ def adsllist():
         return ret
 
 
-@app.route('/adsl')
+@app.route('/adsl',methods=['POST'])
 def adslop():
     adsl = Adsl(adsl_config['host'], adsl_config['port'])
     lines = request.args['lines']
