@@ -70,7 +70,7 @@ def adslop():
         lines = request.form['lines']
         ret = ''
         for line in lines.split(','):
-            if adsl.exists(lines):
+            if adsl.exists(line):
                 adsl.setstatusbyline(line, 'dailing')
                 ret += line + ': ok\n'
             else:
@@ -82,7 +82,7 @@ def adslop():
         lines = request.form['lines']
         ret = ''
         for line in lines.split(','):
-            if adsl.exists(lines):
+            if adsl.exists(line):
                 adsl.setstatusbyline(line, 'available')
                 ret += line + ': ok\n'
             else:
