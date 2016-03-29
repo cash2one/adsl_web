@@ -7,7 +7,7 @@ from tools import Adsl
 app = Flask(__name__)
 
 adsl_config = {
-    'host': '192.168.27.37',
+    'host': '127.0.0.1',
     'port': 6379,
 }
 
@@ -25,17 +25,24 @@ def adsllist():
     if len(parameters) > 0:
         if 'num' in parameters:
             num = int(parameters['num'])
-            # lines = adsl.getnumsavailablelines(num)
-            #
-            # ret = '\n'.join(lines)
+
             lines = adsl.getlines()
+            i = 0
+            ret = ''
+            for line in lines:
+                if adsl.getstatusbyline(line) == 'available':
+                    i += 1
+                    str = line + ' ' + adsl.getidcbyline(line) + ' ' + adsl.getadslbyline(line) + ' ' + adsl.getstatusbyline(line)
+                    ret += str + '\n'
+
+                    if i > num:
+                        break
 
             return ret
 
         elif 'show' in parameters:
             ret = ''
             if parameters['show'].lower() == 'all':
-                # data = adsl.getall()
                 lines = adsl.getlines()
                 for line in lines:
                     str = line + ' ' + adsl.getidcbyline(line) + ' ' + adsl.getadslbyline(line) + ' ' + adsl.getstatusbyline(line)
