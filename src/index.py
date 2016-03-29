@@ -64,8 +64,8 @@ def adsllist():
 @app.route('/adsl',methods=['POST'])
 def adslop():
     adsl = Adsl(adsl_config['host'], adsl_config['port'])
-    lines = request.args['lines']
-    status = request.args['status']
+    lines = request.form['lines']
+    status = request.form['status']
 
     if status == 'used':
         ret = ''
@@ -90,7 +90,7 @@ def adslop():
         return ret
 
     elif status == 'new':
-        ip_adsl = request.args['ip_adsl']
+        ip_adsl = request.form['ip_adsl']
         ip_idc = request.remote_addr
 
         adsl.additem(lines, ip_idc, ip_adsl)
