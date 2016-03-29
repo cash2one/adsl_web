@@ -35,7 +35,9 @@ def adsllist():
                     str = line + ' ' + adsl.getidcbyline(line) + ' ' + adsl.getadslbyline(line) + ' ' + adsl.getstatusbyline(line)
                     ret += str + '\n'
 
-                    if i > num:
+                    adsl.setstatusbyline(line, status='using')
+
+                    if i >= num:
                         break
 
             return ret
