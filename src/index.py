@@ -79,18 +79,6 @@ def adslop():
                 ret += line + ': no this line\n'
 
         return ret
-    #
-    # elif status == 'dailed' :
-    #     line = request.form['line']
-    #     ret = ''
-    #     for line in lines.split(','):
-    #         if adsl.exists(line):
-    #             adsl.setstatusbyline(line, 'available')
-    #             ret += line + ': ok\n'
-    #         else:
-    #             ret += line + ': no this line\n'
-    #
-    #     return ret
 
     elif status == 'new' or status == 'dailed':
         line = request.form['line']
