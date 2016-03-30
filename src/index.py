@@ -47,23 +47,22 @@ def adsllist():
             if parameters['show'].lower() == 'all':
                 lines = adsl.getlines()
                 for line in lines:
-                    str = line + ' ' + adsl.getidcbyline(line) + ' ' + adsl.getadslbyline(line) + ' ' + adsl.getstatusbyline(line)
+                    str = line + ' ' + adsl.getidcbyline(line) + ' ' + adsl.getstatusbyline(line)
                     ret += str + '\n'
 
             return ret
-
     else:
         ret = ''
         lines = adsl.getlines()
         for line in lines:
             if adsl.getstatusbyline(line) == 'available':
-                str = line + ' ' + adsl.getidcbyline(line) + ' ' + adsl.getadslbyline(line) + ' ' + adsl.getstatusbyline(line)
+                str = line + ' ' + adsl.getidcbyline(line) + ' ' + adsl.getadslbyline(line) + ' ' + 'ONLINE'
                 ret += str + '\n'
 
         return ret
 
 
-@app.route('/adsl',methods=['POST'])
+@app.route('/adsl/host/report',methods=['POST'])
 def adslop():
     adsl = Adsl(adsl_config['host'], adsl_config['port'])
     status = request.form['status']
