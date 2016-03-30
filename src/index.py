@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 
-from flask import Flask, request, url_for, redirect
+from flask import Flask, request, url_for, redirect, abort
 from tools import Adsl
 import time, logging, os
 
@@ -81,17 +81,19 @@ def adslop():
     adsl = Adsl(adsl_config['host'], adsl_config['port'])
 
     if 'ip' in request.form:
-        ips = request.form['ip']
-        alllines = adsl.getlines()
-        ret = ''
-        for ip in ips.split(','):
-            for line in alllines:
-                if ip == adsl.getidcbyline(line):
-                    adsl.setstatusbyline(line,'dailing')
-                    ret += ip + ': ok\n'
-                    break
-
-        return ret
+        if request.headers.get('User-Agent').lower() == 'dj-adsl-backend':
+            ips = request.form['ip']
+            alllines = adsl.getlines()
+            ret = ''
+            for ip in ips.split(','):
+                for line in alllines:
+                    if ip == adsl.getidcbyline(line):
+                        adsl.setstatusbyline(line,'dailing')
+                        ret += ip + ': ok\n'
+                        break
+            return ret
+        else:
+            abort(403)
 
     elif 'status' in request.form:
         status = request.form['status']
