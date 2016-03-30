@@ -3,6 +3,7 @@
 
 from flask import Flask, request, url_for, redirect
 from tools import Adsl
+import time, logging, os
 
 app = Flask(__name__)
 
@@ -10,6 +11,19 @@ adsl_config = {
     'host': '127.0.0.1',
     'port': 6379,
 }
+
+LOG_PATH = '/ROOT/logs/web'
+FILE_NAME = 'web-' + time.strftime('%Y-%m-%d', time.localtime()) + '.log'
+LOG_FILE = LOG_PATH + '/' + FILE_NAME
+
+if not os.path.exists(LOG_PATH):
+    os.makedirs(LOG_PATH)
+
+logging.basicConfig(level=logging.DEBUG,
+                    format='[%(asctime)s] [%(filename)s:%(lineno)d] [%(levelname)s] %(message)s',
+                    filemode='a',
+                    filename=LOG_FILE)
+logger = logging.getLogger(__name__)
 
 
 @app.route('/')
