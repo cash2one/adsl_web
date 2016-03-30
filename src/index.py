@@ -46,7 +46,7 @@ def adsllist():
             for line in lines:
                 if adsl.getstatusbyline(line) == 'available':
                     i += 1
-                    str = line + ' ' + adsl.getidcbyline(line) + ' ' + adsl.getadslbyline(line) + ' ' + adsl.getstatusbyline(line)
+                    str = line + ' ' + adsl.getidcbyline(line) + ':8200 ONLINE'
                     ret += str + '\n'
 
                     adsl.setstatusbyline(line, status='using')
@@ -61,7 +61,7 @@ def adsllist():
             if parameters['show'].lower() == 'all':
                 lines = adsl.getlines()
                 for line in lines:
-                    str = line + ' ' + adsl.getidcbyline(line) + ' ' + adsl.getstatusbyline(line)
+                    str = line + ' ' + adsl.getidcbyline(line) + ':8200 ' + adsl.getadslbyline(line) + ' ' + adsl.getstatusbyline(line)
                     ret += str + '\n'
 
             return ret
@@ -70,7 +70,7 @@ def adsllist():
         lines = adsl.getlines()
         for line in lines:
             if adsl.getstatusbyline(line) == 'available':
-                str = line + ' ' + adsl.getidcbyline(line) + ' ' + adsl.getadslbyline(line) + ' ' + 'ONLINE'
+                str = line + ' ' + adsl.getidcbyline(line) +  ':8200 ONLINE'
                 ret += str + '\n'
 
         return ret
