@@ -79,30 +79,40 @@ def adsllist():
 @app.route('/adsl/host/report',methods=['POST'])
 def adslop():
     adsl = Adsl(adsl_config['host'], adsl_config['port'])
-    status = request.form['status']
 
-    if status == 'used':
-        lines = request.form['lines']
-        ret = ''
-        for line in lines.split(','):
-            if adsl.exists(line):
-                adsl.setstatusbyline(line, 'dailing')
-                ret += line + ': ok\n'
-            else:
-                ret += line + ': no this line\n'
+    if 'ip' in request.form:
+        ips = request.form['ip']
+        alllines = adsl.getlines()
+        for ip in ips.split(','):
+            for line in alllines:
+                if ip == adsl.getidcbyline():
+                    adsl.setstatusbyline(line,'dailing')
+                    break
 
-        return ret
+    elif 'status' in request.form:
+        status = request.form['status']
+        if status == 'used':
+            lines = request.form['lines']
 
-    elif status == 'new' or status == 'dailed':
-        line = request.form['line']
-        ip_adsl = request.form['ip_adsl']
-        ip_idc = request.form['ip_idc']
+            ret = ''
+            for line in lines.split(','):
+                if adsl.exists(line):
+                    adsl.setstatusbyline(line, 'dailing')
+                    ret += line + ': ok\n'
+                else:
+                    ret += line + ': no this line\n'
+            return ret
 
-        adsl.additem(line, ip_idc, ip_adsl)
+        elif status == 'new' or status == 'dailed':
+            line = request.form['line']
+            ip_adsl = request.form['ip_adsl']
+            ip_idc = request.form['ip_idc']
 
-        str = line + ':' + ip_idc + ':' + ip_adsl
+            adsl.additem(line, ip_idc, ip_adsl)
 
-        return 'Add ' + str + ' successfully!'
+            str = line + ':' + ip_idc + ':' + ip_adsl
+
+            return 'Add ' + str + ' successfully!'
 
 
 if __name__ == '__main__':
