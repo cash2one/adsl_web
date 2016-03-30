@@ -85,7 +85,7 @@ def adslop():
         alllines = adsl.getlines()
         for ip in ips.split(','):
             for line in alllines:
-                if ip == adsl.getidcbyline():
+                if ip == adsl.getidcbyline(line):
                     adsl.setstatusbyline(line,'dailing')
                     break
 
