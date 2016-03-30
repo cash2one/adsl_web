@@ -83,11 +83,15 @@ def adslop():
     if 'ip' in request.form:
         ips = request.form['ip']
         alllines = adsl.getlines()
+        ret = ''
         for ip in ips.split(','):
             for line in alllines:
                 if ip == adsl.getidcbyline(line):
                     adsl.setstatusbyline(line,'dailing')
+                    ret += ip + ': ok\n'
                     break
+
+        return ret
 
     elif 'status' in request.form:
         status = request.form['status']
