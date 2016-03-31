@@ -116,28 +116,25 @@ def adslop():
 @app.route('/adsl/status')
 def adslstatus():
     adsl = Adsl(adsl_config['host'], adsl_config['port'])
+    lines = adsl.getlines()
+    ltm = int(time.time())
+    ret = ''
 
     if 'show' in request.args:
-        ret = ''
-        lines = adsl.getlines()
         for line in lines:
             tm = int(adsl.gettimebyline(line))
-            ltm = int(time.time())
             str1 = line + ' ' + adsl.getidcbyline(line) + ':8200 ' + adsl.getadslbyline(line) + ' last updated before ' + str(abs(ltm - tm)) + ' seconds.'
             if abs(ltm - tm) > 60:
                 str1 += ' WARN_TTL1min'
             ret += str1 + '\n'
-        return ret
     else:
-        ret = ''
-        lines = adsl.getlines()
         for line in lines:
-            if adsl.getstatusbyline(line) == 'available' and int(adsl.gettimebyline(line)) <= 60:
-                tm = int(adsl.gettimebyline(line))
-                ltm = int(time.time())
+            tm = int(adsl.gettimebyline(line))
+            if adsl.getstatusbyline(line) == 'available' and int(abs(ltm - tm)) <= 60:
                 str1 = line + ' ' + adsl.getidcbyline(line) + ':8200 ' + adsl.getadslbyline(line) + ' last updated before ' + str(abs(ltm - tm)) + ' seconds.'
                 ret += str1 + '\n'
-        return ret
+
+    return ret
 
 
 if __name__ == '__main__':
