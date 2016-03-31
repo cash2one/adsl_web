@@ -98,19 +98,7 @@ def adslop():
 
     elif 'status' in request.form:
         status = request.form['status']
-        if status == 'used':
-            lines = request.form['lines']
-
-            ret = ''
-            for line in lines.split(','):
-                if adsl.exists(line):
-                    adsl.setstatusbyline(line, 'dailing')
-                    ret += line + ': ok\n'
-                else:
-                    ret += line + ': no this line\n'
-            return ret
-
-        elif status == 'new' or status == 'dailed':
+        if status == 'new' or status == 'dailed':
             line = request.form['line']
             ip_adsl = request.form['ip_adsl']
             ip_idc = request.form['ip_idc']
@@ -121,6 +109,8 @@ def adslop():
             str = line + ':' + ip_idc + ':' + ip_adsl
 
             return 'Add ' + str + ' successfully!'
+        else:
+            abort(404)
 
 
 @app.route('/adsl/status')
