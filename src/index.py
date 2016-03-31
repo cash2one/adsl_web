@@ -121,22 +121,22 @@ def adslstatus():
         ret = ''
         lines = adsl.getlines()
         for line in lines:
-            tm = adsl.gettimebyline(line)
+            tm = int(adsl.gettimebyline(line))
             ltm = int(time.time())
-            str = line + ' ' + adsl.getidcbyline(line) + ':8200 ' + adsl.getadslbyline(line) + ' last updated before ' + str(abs(ltm - tm)) + ' seconds.'
+            str1 = line + ' ' + adsl.getidcbyline(line) + ':8200 ' + adsl.getadslbyline(line) + ' last updated before ' + str(abs(ltm - tm)) + ' seconds.'
             if abs(ltm - tm) > 60:
-                str += ' WARN_TTL1min'
-            ret += str + '\n'
+                str1 += ' WARN_TTL1min'
+            ret += str1 + '\n'
         return ret
     else:
         ret = ''
         lines = adsl.getlines()
         for line in lines:
             if adsl.getstatusbyline(line) == 'available' and adsl.gettimebyline(line) <= 60:
-                tm = adsl.gettimebyline(line)
+                tm = int(adsl.gettimebyline(line))
                 ltm = int(time.time())
-                str = line + ' ' + adsl.getidcbyline(line) + ':8200 ' + adsl.getadslbyline(line) + ' last updated before ' + str(abs(ltm - tm)) + ' seconds.'
-            ret += str + '\n'
+                str1 = line + ' ' + adsl.getidcbyline(line) + ':8200 ' + adsl.getadslbyline(line) + ' last updated before ' + str(abs(ltm - tm)) + ' seconds.'
+                ret += str1 + '\n'
         return ret
 
 
