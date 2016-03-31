@@ -132,7 +132,7 @@ def adslstatus():
         ret = ''
         lines = adsl.getlines()
         for line in lines:
-            if adsl.getstatusbyline(line) == 'available' and adsl.gettimebyline(line) <= 60:
+            if adsl.getstatusbyline(line) == 'available' and int(adsl.gettimebyline(line)) <= 60:
                 tm = int(adsl.gettimebyline(line))
                 ltm = int(time.time())
                 str1 = line + ' ' + adsl.getidcbyline(line) + ':8200 ' + adsl.getadslbyline(line) + ' last updated before ' + str(abs(ltm - tm)) + ' seconds.'
