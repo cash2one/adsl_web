@@ -56,6 +56,10 @@ class Adsl(object):
         ret = self.conn.hget(line, 'status')
         return ret
 
+    def gettimebyline(self, line):
+        ret = self.conn.hget(line, 'time')
+        return ret
+
     def setstatusbyline(self, line, status):
         key = 'status'
         value = status
@@ -74,9 +78,15 @@ class Adsl(object):
         ret = self.conn.hset(line, key, value)
         return ret
 
-    def additem(self, line, ip_idc, ip_adsl):
+    def settimebyline(self, line, tm):
+        key = 'tm'
+        value = tm
+        ret = self.conn.hset(line, key, value)
+        return ret
+
+    def additem(self, line, ip_idc, ip_adsl, tm):
         status = 'available'
-        data = {'ip_idc': ip_idc, 'ip_adsl': ip_adsl, 'status': status}
+        data = {'ip_idc': ip_idc, 'ip_adsl': ip_adsl, 'status': status, 'time': tm}
         ret = self.conn.hmset(line, data)
         return ret
 

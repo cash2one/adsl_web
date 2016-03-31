@@ -63,8 +63,9 @@ def adsllist():
                 for line in lines:
                     str = line + ' ' + adsl.getidcbyline(line) + ':8200 ' + adsl.getadslbyline(line) + ' ' + adsl.getstatusbyline(line)
                     ret += str + '\n'
-
-            return ret
+                return ret
+            else:
+                return redirect('/adsl/list')
     else:
         ret = ''
         lines = adsl.getlines()
@@ -113,12 +114,40 @@ def adslop():
             line = request.form['line']
             ip_adsl = request.form['ip_adsl']
             ip_idc = request.form['ip_idc']
+            tm = int(time.time())
 
-            adsl.additem(line, ip_idc, ip_adsl)
+            adsl.additem(line, ip_idc, ip_adsl, tm)
 
             str = line + ':' + ip_idc + ':' + ip_adsl
 
             return 'Add ' + str + ' successfully!'
+
+
+@app.route('/adsl/status')
+def adslstatus():
+    adsl = Adsl(adsl_config['host'], adsl_config['port'])
+
+    if 'show' in request.args:
+        ret = ''
+        lines = adsl.getlines()
+        for line in lines:
+            tm = adsl.gettimebyline(line)
+            ltm = int(time.time())
+            str = line + ' ' + adsl.getidcbyline(line) + ':8200 ' + adsl.getadslbyline(line) + ' last updated before ' + str(abs(ltm - tm)) + ' seconds.'
+            if abs(ltm - tm) > 60:
+                str += ' WARN_TTL1min'
+            ret += str + '\n'
+        return ret
+    else:
+        ret = ''
+        lines = adsl.getlines()
+        for line in lines:
+            if adsl.getstatusbyline(line) == 'available' and adsl.gettimebyline(line) <= 60:
+                tm = adsl.gettimebyline(line)
+                ltm = int(time.time())
+                str = line + ' ' + adsl.getidcbyline(line) + ':8200 ' + adsl.getadslbyline(line) + ' last updated before ' + str(abs(ltm - tm)) + ' seconds.'
+            ret += str + '\n'
+        return ret
 
 
 if __name__ == '__main__':
